@@ -16,10 +16,11 @@ void SeqRead(char *fpath, char *input_arr);
 void SeqParse(char *input_arr, seq_t *Prot);
 int SeqLength(char *input_arr);
 
-int main(){
+int main(int argc, char **argv){
         char *seq;
         seq_t *woa;
-        SeqRead("/Users/AbdullahAhmad/Desktop/1mc2.fasta.txt", seq);
+        SeqRead(argv[1], seq);
+        free(seq);
 }
 
 void SeqRead(char *fpath, char *input_arr){
@@ -32,25 +33,14 @@ void SeqRead(char *fpath, char *input_arr){
         input_arr = malloc((size + 1) * sizeof(*input_arr));
         fread(input_arr, size, 1, file);
         input_arr[size] = '\0';
-        printf("%s\n", input_arr);
+        printf("%s", input_arr);
 }
 
 void SeqParse(char *input_arr, seq_t *Prot){
-        char name[MAX];
-        char seq[MAX];
-        int linecount;
-        for (int i = 0; i < MAX; ++i){
-                if (input_arr[i] == '>'){
-                        name[0] = input_arr[i+1]; name[1] = input_arr[i+2]; name[2] = input_arr[i+3]; name[3] = input_arr[i+4];
-                }
-                if (input_arr[i] == '\n'){
-                        ++linecount;
-                }
-                if (linecount == 1){
-                }
+        int i, nc;
+        i = 0;
+        while (input_arr[i] != '\0'){
+               printf("%c", input_arr[i]);
+                ++i;
         }
-        printf("%s\n", name);
-}
-
-int SeqLength(char *input_arr){
 }
