@@ -1,26 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "NW.h"
+
 /*
  * TODO:
  * -Sequence Parser
  * -NW Equation Core
  */
 
-typedef struct seq_info {
-        char *name;
-        char *prot_seq;
-} seq_t;
-
-void SeqRead(char *fpath, char **input_arr);
-void SeqParse(char **input_arr, seq_t *Prot);
-int SeqLength(char *input_arr);
-
 int main(int argc, char **argv){
         char *seq;
         seq_t woa;
         SeqRead(argv[1], &seq);
         SeqParse(&seq, &woa);
-        printf("%s\n%d\n", woa.name, SeqLength(seq));
+        printf("%s\n%s\n", woa.header, woa.sequence);
         free(seq);
 }
 
@@ -37,40 +31,31 @@ void SeqRead(char *fpath, char **input_arr){
 }
 
 void SeqParse(char **input_arr, seq_t *Prot){
-        int i = 0;
-        int linecount = 0;
-        Prot->name = malloc((5) * sizeof(char));
-        while((*input_arr)[i] != '\0'){
-                if ((*input_arr)[i] == '>'){
-                        Prot->name[0] = (*input_arr)[i+1];
-                        Prot->name[1] = (*input_arr)[i+2];
-                        Prot->name[2] = (*input_arr)[i+3];
-                        Prot->name[3] = (*input_arr)[i+4];
-                        Prot->name[4] = '\0';
-                }
-                if ((*input_arr)[i] == '\n'){
-                        linecount++;
-                        ++i;
-                }
-                if (linecount > 0){
-                        printf("%c", (*input_arr)[i]);
-                }
-                ++i;
-        }
-        printf("\n");
+        int idlen, seqlen;
+        SeqLengths(input_arr, &idlen, &seqlen);
+        int backup = seqlen;
+        printf("%d\t%d\n", idlen, seqlen);
+        printf("%d\n", backup);
+        Prot->header = malloc((idlen + 1) * sizeof(char));
+        strncpy(Prot->header, *input_arr, idlen);
+        Prot->header[idlen] = '\0';
+        free(Prot->header);
+//        Prot->sequence = malloc((seqlen + 1) * sizeof(char));
+//        strncpy(Prot->sequence, (*input_arr+(idlen+1)), seqlen);
+//        Prot->sequence[seqlen] = '\0';
 }
 
-int SeqLength(char *input_arr){
-        int i, linecount, wc;
-        i = linecount = wc = 0;
-        while(input_arr[i] != '\0'){
-                if (input_arr[i] == '\n'){
-                        linecount++;
-                        i++;
+void SeqLengths(char **input_arr, int *id_len, int *seq_len){
+        char *token;
+        int sum;
+        token = strtok(*input_arr, "\n");
+        while( token != NULL) {
+                if(token[0] == '>'){
+                        *id_len  = (int)strlen(token);
+                }else{
+                        sum += strlen(token);
                 }
-                if (linecount > 0){
-                        printf("%c", input_arr[i]);
-                        }
-                }
-        return wc;
+                token = strtok(NULL, "\n");
+        }
+        *seq_len = sum;
 }
