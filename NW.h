@@ -8,6 +8,6 @@ typedef struct seq_info {
 
 void SeqRead(char *fpath, char **input_arr);
 void SeqParse(char **input_arr, seq_t *Prot);
-void SeqLengths(char **input_arr, int *id_len, int *seq_len);
+void SeqLengths(char *input_arr, int *id_len, int *seq_len);
 
 #endif
